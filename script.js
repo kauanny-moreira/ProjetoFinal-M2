@@ -36,56 +36,55 @@ const perguntas = [
         ]
     }
 ];
-
 let perguntaAtual = 0;
 let pontos = 0;
-
+let jogoAtivo = true; // Variável para controlar se o jogo está ativo
 const perguntaElemento = document.getElementById("pergunta");
-const opcoesElemento = document.getElementById("opcoes");
-const mensagemFeedback = document.getElementById("mensagem-feedback");
+const alternativasElemento = document.getElementById("alternativas");
+const mensagemFeedback = document.getElementById("mensagem");
 const botaoProximo = document.getElementById("botao-proximo");
 const botaoReiniciar = document.getElementById("botao-reiniciar");
 const faseFinalElemento = document.getElementById("fase-final");
-
 function iniciarQuiz() {
     carregarPergunta();
     botaoReiniciar.style.display = "none";
+    jogoAtivo = true; // Garante que o jogo está ativo ao iniciar
 }
-
 function carregarPergunta() {
-    perguntaElemento.textContent = perguntas[perguntaAtual].pergunta;
-    opcoesElemento.innerHTML = "";
-
+    perguntaElemento.innerHTML = perguntas[perguntaAtual].pergunta;
+    alternativasElemento.innerHTML = "";
     perguntas[perguntaAtual].respostas.forEach((resposta, index) => {
         const botaoOpcao = document.createElement("button");
-        botaoOpcao.className = "opcao";
-        botaoOpcao.id = `opcao${index + 1}`;
-        botaoOpcao.textContent = resposta.texto;
+        botaoOpcao.className = "alternativa";
+        botaoOpcao.id = `alternativa${index + 1}`;
+        botaoOpcao.innerHTML = resposta.texto;
         botaoOpcao.addEventListener("click", () => selecionarResposta(index));
-        opcoesElemento.appendChild(botaoOpcao);
+        alternativasElemento.appendChild(botaoOpcao);
     });
-
-    mensagemFeedback.textContent = "";
+    mensagemFeedback.innerHTML = "";
     botaoProximo.style.display = "none";
-    faseFinalElemento.textContent = "";
+    faseFinalElemento.innerHTML = "";
 }
-
 function selecionarResposta(indiceSelecionado) {
-    const opcoes = opcoesElemento.querySelectorAll(".opcao");
-    opcoes.forEach((opcao, index) => {
+    if (!jogoAtivo) return; // Impede seleção se o jogo não estiver ativo
+    const alternativas = alternativasElemento.querySelectorAll(".alternativa");
+    alternativas.forEach((opcao, index) => {
         opcao.disabled = true;
         if (index === indiceSelecionado) {
             if (perguntas[perguntaAtual].respostas[index].correta) {
                 opcao.classList.add("correta");
-                mensagemFeedback.textContent = "Resposta Correta!";
-                mensagemFeedback.style.backgroundColor = "#d4edda";
-                mensagemFeedback.style.color = "#155724";
+                mensagemFeedback.innerHTML = "Resposta Correta!";
                 pontos++;
+                if (perguntaAtual < perguntas.length - 1) {
+                    botaoProximo.style.display = "block";
+                } else {
+                    finalizarQuiz();
+                }
             } else {
                 opcao.classList.add("errada");
-                mensagemFeedback.textContent = "Resposta Incorreta!";
-                mensagemFeedback.style.backgroundColor = "#f8d7da";
-                mensagemFeedback.style.color = "#721c24";
+                mensagemFeedback.innerHTML = "Resposta Incorreta! Fim de Jogo!";
+                jogoAtivo = false; // Encerra o jogo
+                botaoReiniciar.style.display = "block"; // Mostra o botão de reiniciar
             }
         } else {
             if (perguntas[perguntaAtual].respostas[index].correta) {
@@ -93,36 +92,24 @@ function selecionarResposta(indiceSelecionado) {
             }
         }
     });
-
-    if (perguntaAtual < perguntas.length - 1) {
-        botaoProximo.style.display = "block";
-    } else {
-        finalizarQuiz();
-    }
 }
-
 function proximaPergunta() {
     perguntaAtual++;
     carregarPergunta();
 }
-
 function finalizarQuiz() {
-    faseFinalElemento.textContent = `Sua pontuação final é ${pontos} de ${perguntas.length}.`;
-     mensagemFeedback.textContent = pontos === perguntas.length
+    faseFinalElemento.innerHTML = `Sua pontuação final é ${pontos} de ${perguntas.length}.`;
+    mensagem.innerHTML = pontos === perguntas.length
         ? "Parabéns, você acertou todas as perguntas!"
         : "Fim do Quiz!";
-    mensagemFeedback.style.backgroundColor = "#fff";
-    mensagemFeedback.style.color = "#333";
     botaoReiniciar.style.display = "block";
 }
-
 function reiniciarQuiz() {
     perguntaAtual = 0;
     pontos = 0;
+    jogoAtivo = true; // Reinicia o estado do jogo
     iniciarQuiz();
 }
-
 botaoProximo.addEventListener("click", proximaPergunta);
 botaoReiniciar.addEventListener("click", reiniciarQuiz);
-
 iniciarQuiz();
