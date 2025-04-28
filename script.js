@@ -1,3 +1,118 @@
+class Quiz {
+    constructor(perguntas) {
+        this.perguntas = perguntas;
+        this.perguntaAtual = 0;
+        this.pontos = 0;
+        this.jogoAtivo = true;
+        this.perguntaElemento = document.getElementById("pergunta");
+        this.alternativasElemento = document.getElementById("alternativas");
+        this.mensagemFeedback = document.getElementById("mensagem");
+        this.botaoProximo = document.getElementById("botao-proximo");
+        this.botaoReiniciar = document.getElementById("botao-reiniciar");
+        this.faseFinalElemento = document.getElementById("fase-final");
+
+        this.proximaPergunta = this.proximaPergunta.bind(this); // Bind necessário para usar this dentro do event listener
+        this.reiniciarQuiz = this.reiniciarQuiz.bind(this); // Bind necessário para usar this dentro do event listener
+
+        this.botaoProximo.addEventListener("click", this.proximaPergunta);
+        this.botaoReiniciar.addEventListener("click", this.reiniciarQuiz);
+    }
+
+    iniciarQuiz() {
+        this.carregarPergunta();
+        this.botaoReiniciar.style.display = "none";
+        this.jogoAtivo = true;
+    }
+
+    carregarPergunta() {
+        const perguntaElemento = this.perguntaElemento;
+        const alternativasElemento = this.alternativasElemento;
+        const perguntas = this.perguntas;
+        const perguntaAtual = this.perguntaAtual;
+        const mensagemFeedback = this.mensagemFeedback;
+        const botaoProximo = this.botaoProximo;
+        const faseFinalElemento = this.faseFinalElemento;
+
+        perguntaElemento.innerHTML = perguntas[perguntaAtual].pergunta;
+        alternativasElemento.innerHTML = "";
+        perguntas[perguntaAtual].respostas.forEach((resposta, index) => {
+            const botaoOpcao = document.createElement("button");
+            botaoOpcao.className = "alternativa";
+            botaoOpcao.id = `alternativa${index + 1}`;
+            botaoOpcao.innerHTML = resposta.texto;
+            botaoOpcao.addEventListener("click", () => this.selecionarResposta(index));
+            alternativasElemento.appendChild(botaoOpcao);
+        });
+        mensagemFeedback.innerHTML = "";
+        botaoProximo.style.display = "none";
+        faseFinalElemento.innerHTML = "";
+    }
+
+    selecionarResposta(indiceSelecionado) {
+        if (!this.jogoAtivo) return;
+
+        const alternativasElemento = this.alternativasElemento;
+        const perguntas = this.perguntas;
+        const perguntaAtual = this.perguntaAtual;
+        const mensagemFeedback = this.mensagemFeedback;
+        const botaoProximo = this.botaoProximo;
+        const botaoReiniciar = this.botaoReiniciar;
+
+
+        const alternativas = alternativasElemento.querySelectorAll(".alternativa");
+        alternativas.forEach((opcao, index) => {
+            opcao.disabled = true;
+            if (index === indiceSelecionado) {
+                if (perguntas[perguntaAtual].respostas[index].correta) {
+                    opcao.classList.add("correta");
+                    mensagemFeedback.innerHTML = "Resposta Correta!";
+                    this.pontos++;
+                    if (perguntaAtual < perguntas.length - 1) {
+                        botaoProximo.style.display = "block";
+                    } else {
+                        this.finalizarQuiz();
+                    }
+                } else {
+                    opcao.classList.add("errada");
+                    mensagemFeedback.innerHTML = "Resposta Incorreta! Fim de Jogo!";
+                    this.jogoAtivo = false;
+                    botaoReiniciar.style.display = "block";
+                }
+            } else {
+                if (perguntas[perguntaAtual].respostas[index].correta) {
+                    opcao.classList.add("correta");
+                }
+            }
+        });
+    }
+
+    proximaPergunta() {
+      this.perguntaAtual++;
+      this.carregarPergunta();
+    }
+
+    finalizarQuiz() {
+        const faseFinalElemento = this.faseFinalElemento;
+        const mensagemFeedback = this.mensagemFeedback;
+        const botaoReiniciar = this.botaoReiniciar;
+        const perguntas = this.perguntas;
+        const pontos = this.pontos;
+
+        faseFinalElemento.innerHTML = `Sua pontuação final é ${pontos} de ${perguntas.length}.`;
+        mensagemFeedback.innerHTML = pontos === perguntas.length
+            ? "Parabéns, você acertou todas as perguntas!"
+            : "Fim do Quiz!";
+        botaoReiniciar.style.display = "block";
+    }
+
+    reiniciarQuiz() {
+        this.perguntaAtual = 0;
+        this.pontos = 0;
+        this.jogoAtivo = true;
+        this.iniciarQuiz();
+    }
+}
+
 const perguntas = [
     {
         pergunta: "Qual é a profissão do pai de Bella?",
@@ -36,80 +151,6 @@ const perguntas = [
         ]
     }
 ];
-let perguntaAtual = 0;
-let pontos = 0;
-let jogoAtivo = true; // Variável para controlar se o jogo está ativo
-const perguntaElemento = document.getElementById("pergunta");
-const alternativasElemento = document.getElementById("alternativas");
-const mensagemFeedback = document.getElementById("mensagem");
-const botaoProximo = document.getElementById("botao-proximo");
-const botaoReiniciar = document.getElementById("botao-reiniciar");
-const faseFinalElemento = document.getElementById("fase-final");
-function iniciarQuiz() {
-    carregarPergunta();
-    botaoReiniciar.style.display = "none";
-    jogoAtivo = true; // Garante que o jogo está ativo ao iniciar
-}
-function carregarPergunta() {
-    perguntaElemento.innerHTML = perguntas[perguntaAtual].pergunta;
-    alternativasElemento.innerHTML = "";
-    perguntas[perguntaAtual].respostas.forEach((resposta, index) => {
-        const botaoOpcao = document.createElement("button");
-        botaoOpcao.className = "alternativa";
-        botaoOpcao.id = `alternativa${index + 1}`;
-        botaoOpcao.innerHTML = resposta.texto;
-        botaoOpcao.addEventListener("click", () => selecionarResposta(index));
-        alternativasElemento.appendChild(botaoOpcao);
-    });
-    mensagemFeedback.innerHTML = "";
-    botaoProximo.style.display = "none";
-    faseFinalElemento.innerHTML = "";
-}
-function selecionarResposta(indiceSelecionado) {
-    if (!jogoAtivo) return; // Impede seleção se o jogo não estiver ativo
-    const alternativas = alternativasElemento.querySelectorAll(".alternativa");
-    alternativas.forEach((opcao, index) => {
-        opcao.disabled = true;
-        if (index === indiceSelecionado) {
-            if (perguntas[perguntaAtual].respostas[index].correta) {
-                opcao.classList.add("correta");
-                mensagemFeedback.innerHTML = "Resposta Correta!";
-                pontos++;
-                if (perguntaAtual < perguntas.length - 1) {
-                    botaoProximo.style.display = "block";
-                } else {
-                    finalizarQuiz();
-                }
-            } else {
-                opcao.classList.add("errada");
-                mensagemFeedback.innerHTML = "Resposta Incorreta! Fim de Jogo!";
-                jogoAtivo = false; // Encerra o jogo
-                botaoReiniciar.style.display = "block"; // Mostra o botão de reiniciar
-            }
-        } else {
-            if (perguntas[perguntaAtual].respostas[index].correta) {
-                opcao.classList.add("correta");
-            }
-        }
-    });
-}
-function proximaPergunta() {
-    perguntaAtual++;
-    carregarPergunta();
-}
-function finalizarQuiz() {
-    faseFinalElemento.innerHTML = `Sua pontuação final é ${pontos} de ${perguntas.length}.`;
-    mensagem.innerHTML = pontos === perguntas.length
-        ? "Parabéns, você acertou todas as perguntas!"
-        : "Fim do Quiz!";
-    botaoReiniciar.style.display = "block";
-}
-function reiniciarQuiz() {
-    perguntaAtual = 0;
-    pontos = 0;
-    jogoAtivo = true; // Reinicia o estado do jogo
-    iniciarQuiz();
-}
-botaoProximo.addEventListener("click", proximaPergunta);
-botaoReiniciar.addEventListener("click", reiniciarQuiz);
-iniciarQuiz();
+
+const quiz = new Quiz(perguntas);
+quiz.iniciarQuiz();
