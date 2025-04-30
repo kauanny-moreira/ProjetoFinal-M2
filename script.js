@@ -2,7 +2,7 @@ class Quiz {
     constructor(perguntas) {
         this.perguntas = perguntas;
         this.perguntaAtual = 0;
-        this.pontos = 0;
+        // this.pontos = 0;
         this.jogoAtivo = true;
         this.perguntaElemento = document.getElementById("pergunta");
         this.alternativasElemento = document.getElementById("alternativas");
@@ -11,8 +11,8 @@ class Quiz {
         this.botaoReiniciar = document.getElementById("botao-reiniciar");
         this.faseFinalElemento = document.getElementById("fase-final");
 
-        this.proximaPergunta = this.proximaPergunta.bind(this); // Bind necessário para usar this dentro do event listener
-        this.reiniciarQuiz = this.reiniciarQuiz.bind(this); // Bind necessário para usar this dentro do event listener
+        this.proximaPergunta = this.proximaPergunta.bind(this); 
+        this.reiniciarQuiz = this.reiniciarQuiz.bind(this);
 
         this.botaoProximo.addEventListener("click", this.proximaPergunta);
         this.botaoReiniciar.addEventListener("click", this.reiniciarQuiz);
