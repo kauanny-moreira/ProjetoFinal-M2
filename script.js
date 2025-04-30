@@ -2,12 +2,12 @@
 
 let nomeJogador = prompt("Qual é o seu nome?");
 
-    // Se o jogador digitou um nome, mostra uma mensagem de boas-vindas
+    // Se o jogador digitou um nome, mostra uma mensagem de boas-vindasss
     if (nomeJogador) {
 alert(`Bem-vindo(a), ${nomeJogador}!`);
     } else {
         alert("Bem-vindo(a)!");
-        nomeJogador = "Jogador(a)"; // Define um nome padrão
+        nomeJogador = "Jogador(a)"; 
     }
  
  
