@@ -1,3 +1,4 @@
+
 class Quiz {
     constructor(perguntas) {
         this.perguntas = perguntas;
