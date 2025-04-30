@@ -1,5 +1,17 @@
 
-class Quiz {
+
+let nomeJogador = prompt("Qual é o seu nome?");
+
+    // Se o jogador digitou um nome, mostra uma mensagem de boas-vindas
+    if (nomeJogador) {
+alert(`Bem-vindo(a), ${nomeJogador}!`);
+    } else {
+        alert("Bem-vindo(a)!");
+        nomeJogador = "Jogador(a)"; // Define um nome padrão
+    }
+ 
+ 
+ class Quiz {
     constructor(perguntas) {
         this.perguntas = perguntas;
         this.perguntaAtual = 0;
