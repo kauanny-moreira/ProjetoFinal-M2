@@ -111,7 +111,7 @@ alert(`Bem-vindo(a), ${nomeJogador}!`);
         const perguntas = this.perguntas;
         const pontos = this.pontos;
 
-        faseFinalElemento.innerHTML = `Sua pontuação final é ${pontos} de ${perguntas.length}.`;
+        // faseFinalElemento.innerHTML = `Sua pontuação final é ${pontos} de ${perguntas.length}.`;
         mensagemFeedback.innerHTML = pontos === perguntas.length
             ? "Parabéns, você acertou todas as perguntas!"
             : "Fim do Quiz!";
